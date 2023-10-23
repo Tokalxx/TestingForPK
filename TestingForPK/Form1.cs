@@ -6,6 +6,7 @@ namespace TestingForPK
         Dictionary<string, string> AnswerDic = new Dictionary<string, string>();
         Random ran = new Random();
         int TempNumScore = 0;
+        bool check1 = true;
 
         public Form1()
         {
@@ -20,6 +21,25 @@ namespace TestingForPK
         }
 
         private void button1_Click(object sender, EventArgs e)
+        {
+            panel1.Controls.Clear();
+            TempNumScore = 0;
+            panel2.Controls.Clear();
+            AnswerDic.Clear();
+
+            if (check1)
+            {
+                Gen1();
+                check1 = false;
+            }
+            else
+            {
+                Gen2();
+                check1 = true;
+            }
+        }
+
+        private void Gen1()
         {
             List<string> callNumbers = Group14.Keys.ToList();
             List<string> calDescription = Group14.Values.ToList();
@@ -66,13 +86,70 @@ namespace TestingForPK
 
                 definitionTextBlock.Location = new Point(0, labelY2);
 
-                panel1.Controls.Add(definitionTextBlock);
+                panel2.Controls.Add(definitionTextBlock);
 
                 // Adjust the Y coordinate for the next label
                 labelY2 += definitionTextBlock.Height + 10;
                 definitionTextBlock.Click += Definition_MouseLeftButtonClick;
 
                 panel2.Controls.Add(definitionTextBlock);
+
+            }
+        }
+
+        private void Gen2()
+        {
+            List<string> callNumbers = Group14.Keys.ToList();
+            List<string> calDescription = Group14.Values.ToList();
+
+            int labelY1 = 0; // Initialize the Y coordinate for the first label
+            int labelY2 = 0; // Initialize the Y coordinate for the first label
+
+            foreach (string x in callNumbers)
+            {
+                Label callLabel = new Label
+                {
+                    Text = x,
+                    Cursor = Cursors.Hand,
+                    Font = new System.Drawing.Font("Arial", 12),
+                    Width = 100,
+                    Height = 30,
+                    Margin = new Padding(5),
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
+
+                // Set the location (X, Y) for the label
+                callLabel.Location = new Point(0, labelY1);
+
+                callLabel.Click += Definition_MouseLeftButtonClick;
+                panel2.Controls.Add(callLabel);
+
+                // Adjust the Y coordinate for the next label
+                labelY1 += callLabel.Height + 10; // You can adjust the spacing as needed
+            }
+            foreach (string x in calDescription.OrderBy(r => ran.Next()))
+            {
+
+
+                Label definitionTextBlock = new Label
+                {
+                    Text = x,
+                    Cursor = Cursors.Hand,
+                    Font = new System.Drawing.Font("Arial", 12),
+                    Width = 300,
+                    Height = 30,
+                    Margin = new Padding(5),
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
+
+                definitionTextBlock.Location = new Point(0, labelY2);
+
+                panel1.Controls.Add(definitionTextBlock);
+
+                // Adjust the Y coordinate for the next label
+                labelY2 += definitionTextBlock.Height + 10;
+                definitionTextBlock.Click += CallLabel_Click;
+
 
             }
         }
@@ -88,14 +165,29 @@ namespace TestingForPK
         {
             if (callNumberTextBlock != null)
             {
-                Label descriptTextBlock = (Label)sender;
-                AnswerDic.Add(callNumberTextBlock.Text, descriptTextBlock.Text);
-                callNumberTextBlock.BackColor = Color.Gray;
-                callNumberTextBlock.IsAccessible = false;
-                descriptTextBlock.BackColor = Color.Gray;
-                descriptTextBlock.IsAccessible = false;
 
-                callNumberTextBlock = null;
+                if (!check1)
+                {
+                    Label descriptTextBlock = (Label)sender;
+                    AnswerDic.Add(callNumberTextBlock.Text, descriptTextBlock.Text);
+                    callNumberTextBlock.BackColor = Color.Gray;
+                    callNumberTextBlock.Enabled = false;
+                    descriptTextBlock.BackColor = Color.Gray;
+                    descriptTextBlock.Enabled = false;
+
+                    callNumberTextBlock = null;
+                }
+                else
+                {
+                    Label descriptTextBlock = (Label)sender;
+                    AnswerDic.Add(descriptTextBlock.Text, callNumberTextBlock.Text);
+                    callNumberTextBlock.BackColor = Color.Gray;
+                    callNumberTextBlock.Enabled = false;
+                    descriptTextBlock.BackColor = Color.Gray;
+                    descriptTextBlock.Enabled = false;
+
+                    callNumberTextBlock = null;
+                }
             }
             else
             {
@@ -117,6 +209,11 @@ namespace TestingForPK
             }
 
             MessageBox.Show("Your Score is: " + TempNumScore);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
